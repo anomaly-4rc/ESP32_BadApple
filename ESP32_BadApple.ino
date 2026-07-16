@@ -8,8 +8,7 @@
 // * Adjust the display pins below
 // * After uploading to ESP32, also do "ESP32 Sketch Data Upload" from Arduino
 
-SSD1306 display (0x3c, 4, 15); // For Heltec
-//SSD1306 display (0x3c, 5, 4);
+SSD1306 display(0x3C, 21, 22);
 
 #if HEATSHRINK_DYNAMIC_ALLOC
 #error HEATSHRINK_DYNAMIC_ALLOC must be false for static allocation test suite.
@@ -216,10 +215,7 @@ void readFile(fs::FS &fs, const char * path){
 
 void setup(){
     Serial.begin(115200);
-    // Reset for some displays
-    pinMode(16,OUTPUT); digitalWrite(16, LOW); delay(50); digitalWrite(16, HIGH);
     display.init();
-    display.flipScreenVertically ();
     display.clear();
     display.setTextAlignment (TEXT_ALIGN_LEFT);
     display.setFont(ArialMT_Plain_10);
@@ -232,7 +228,8 @@ void setup(){
         return;
     }
 
-    pinMode(0, INPUT_PULLUP);
+    int value = touchRead(14);
+    Serial.println(value);
     Serial.print("totalBytes(): ");
     Serial.println(SPIFFS.totalBytes());
     Serial.print("usedBytes(): ");
