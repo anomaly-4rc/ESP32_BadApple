@@ -216,17 +216,27 @@ void readFile(fs::FS &fs, const char * path){
 void setup(){
     Serial.begin(115200);
     display.init();
-    display.clear();
+    display.flipScreenVertically ();
+   // display.clear();
     display.setTextAlignment (TEXT_ALIGN_LEFT);
     display.setFont(ArialMT_Plain_10);
     display.setColor(WHITE);
     display.drawString(0, 0, "Mounting SPIFFS...     ");
     display.display();        
-    if(!SPIFFS.begin()){
-        Serial.println("SPIFFS mount failed");
-        display.drawStringMaxWidth(0, 10, 128, "SPIFFS mount failed. Upload video.hs using ESP32 Sketch Upload."); display.display();
-        return;
-    }
+    if(!SPIFFS.begin(true)){
+    Serial.println("SPIFFS mount failed");
+
+    display.clear();
+    display.drawStringMaxWidth(
+        0,
+        10,
+        128,
+        "SPIFFS mount failed."
+    );
+    display.display();
+
+    return;
+}
 
     int value = touchRead(14);
     Serial.println(value);
@@ -247,6 +257,11 @@ void setup(){
     //}
 }
 
-void loop(){
+void loop() {
+    Serial.println("Replay!");
 
+    readFile(SPIFFS, "/video.hs");
+
+    Serial.println("Finished!");
+    delay(1000);
 }
